@@ -106,7 +106,31 @@ def score_pairing(animal: dict, applicant: dict) -> dict:
         "housing_fit": _housing_fit(animal, applicant),
         "availability_recency": _availability_recency(applicant),
     }
-    total = sum(WEIGHTS[k] * v for k, v in breakdown.items())
+    
+    # Generate notes explaining why they are a good fit
+    notes = []
+    pets = applicant.get("household_pets", [])
+    if pets:
+        pet_types = [p.get("species", "pet") for p in pets]
+        if breakdown["temperament_fit"] >= 0.8:
+            notes.append(f"{animal.get('name', 'This animal')}'s temperament is a great fit for a home with existing pets ({', '.join(pet_types)}).")
+    else:
+        notes.append(f"{animal.get('name', 'This animal')} will thrive in {applicant.get('name', 'the applicant')}'s pet-free home.")
+        
+    exp = applicant.get("experience_level", "first_time").replace("_", " ")
+    if breakdown["experience_match"] >= 0.7:
+        notes.append(f"{applicant.get('name', 'The applicant')}'s {exp} experience level is perfectly suited for this companion.")
+        
+    if breakdown["housing_fit"] >= 0.8:
+        yard = "spacious yard" if applicant.get("yard") else "living space"
+        notes.append(f"Their {yard} provides an ideal environment.")
+        
+    if not notes:
+        notes.append(f"Solid foundational compatibility across lifestyle and housing factors.")
+        
+    breakdown["notes"] = " ".join(notes)
+    
+    total = sum(WEIGHTS[k] * v for k, v in breakdown.items() if k in WEIGHTS)
     return {"applicant_id": applicant["id"], "score": round(total, 3), "breakdown": breakdown, "veto_reason": None}
 
 
