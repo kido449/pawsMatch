@@ -1,0 +1,6 @@
+{
+  "name": "PawsMatch",
+  "description": "Animal shelter coordination dashboard for Sunnydale Animal Rescue featuring real-time overview stats, animal roster, applicant tracking, Kanban match board, outreach management, and urgent escalation alerts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
