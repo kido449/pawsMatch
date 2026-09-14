@@ -137,7 +137,7 @@ async def run_match_engine():
 
     # Run escalation checks (sync wrapper — the tool itself is synchronous)
     from app.agent.tools import check_escalations as _check_escalations_tool
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     escalations = await loop.run_in_executor(None, _check_escalations_tool)
     escalation_count = len(escalations) if isinstance(escalations, list) else 0
 
@@ -158,7 +158,7 @@ async def agent_chat(req: ChatRequest):
     try:
         agent = build_agent()
         # The Strands agent's __call__ is synchronous — run in executor
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         result = await loop.run_in_executor(None, agent, req.message)
         # The agent returns a result object; extract the text
         response_text = str(result)

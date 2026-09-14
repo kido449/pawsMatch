@@ -180,7 +180,19 @@ import asyncio
 
 
 def _run(coro):
-    return asyncio.get_event_loop().run_until_complete(coro)
+    import asyncio
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = None
+        
+    if loop and loop.is_running():
+        # If there is already a running loop in this thread, we must not use asyncio.run
+        import nest_asyncio
+        nest_asyncio.apply()
+        return asyncio.get_event_loop().run_until_complete(coro)
+    
+    return asyncio.run(coro)
 
 
 def _sync_get_animals():
