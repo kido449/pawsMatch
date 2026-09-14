@@ -16,25 +16,25 @@ provider — only base_url/api_key/model_id differ.
 """
 
 import os
+from dotenv import load_dotenv
 
 from openai import OpenAI
 from strands.models.openai import OpenAIModel
 
+load_dotenv()
+
 
 def get_core_model() -> OpenAIModel:
-    """The agent's main reasoning model (Featherless / MiniMax-M2.5).
+    """The agent's main reasoning model.
 
-    This one goes through Strands' OpenAIModel wrapper because it drives the
-    full agent loop (tool selection, multi-step chaining, etc.).
+    Configured to use Google Gemini via its OpenAI-compatible endpoint.
     """
     return OpenAIModel(
         client_args={
-            "api_key": os.environ["FEATHERLESS_API_KEY"],
-            "base_url": os.getenv("FEATHERLESS_BASE_URL", "https://api.featherless.ai/v1"),
+            "api_key": os.environ["GEMINI_API_KEY"],
+            "base_url": os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/"),
         },
-        # NOTE: verify this exact model ID on featherless.ai/models before
-        # running — catalog IDs are case- and path-sensitive.
-        model_id=os.getenv("FEATHERLESS_MODEL_ID", "MiniMaxAI/MiniMax-M2.5"),
+        model_id=os.getenv("GEMINI_MODEL_ID", "gemini-pro-latest"),
         params={"max_tokens": 2048, "temperature": 0.4},
     )
 
