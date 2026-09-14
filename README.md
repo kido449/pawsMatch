@@ -1,64 +1,115 @@
-# PawsMatch (ShelterOps)
+# PawsMatch (ShelterOps) 🐾
 
-AI agent for foster/adopter matching — AWS "Agents for Humans" hackathon,
-Good Neighbor Agents track. Built on the Strands Agents SDK.
+**An AI-Powered Matchmaking and Operations Agent for Animal Rescues**
 
-Full concept and rationale: see the PRD. This repo is the backend core —
-data model, scoring engine, escalation logic, and the agent + tools. The
-FastAPI routes and dashboard frontend are the next layer to build on top.
+Built for the **AWS "Agents for Humans" Hackathon** — *Good Neighbor Agents Track*.
 
-## Two models, used for what each is good at
+---
 
-- **Featherless (MiniMax-M2.5)** — the agent's core reasoning loop. Picked
-  for strong agentic tool-calling, since this agent chains through 7 tools.
-- **Sarvam AI** — Indic-language translation for the WhatsApp intake
-  accessibility feature. Called directly by `translate_intake`, not part of
-  the agent's orchestration.
+## 📖 The Vision
 
-## Setup
+Animal shelters and rescues are consistently under-resourced, relying heavily on volunteers and manual processes to match animals with the perfect foster or forever home. **PawsMatch** reimagines this process by introducing an intelligent, autonomous agent that orchestrates the heavy lifting of rescue operations. 
+
+By leveraging the **Strands Agents SDK**, PawsMatch evaluates compatibility, handles multi-language outreach, proactively flags capacity escalations, and gives shelter operators a conversational interface to interact with their entire database. 
+
+It’s not just a dashboard—it’s an active operational partner.
+
+---
+
+## ✨ Key Features
+
+- **🧠 Autonomous Match Engine**: Uses intelligent scoring models to evaluate hard vetoes (e.g., "no cats") alongside soft preferences (e.g., energy levels, yard size) to pair animals with the perfect applicants.
+- **💬 Conversational Operations Agent**: A Strands-powered AI assistant that has access to all shelter data. Ask it *"Who is the best match for Maple?"* or *"Draft an outreach message for Max"* and watch it use its tools to accomplish the task.
+- **🌐 Accessible Multi-Lingual Intake**: Integrates with Sarvam AI to translate applicant communications into localized Indic languages, ensuring accessibility for diverse communities (such as via WhatsApp intake).
+- **🚨 Smart Escalation Monitoring**: Automatically alerts staff when kennel occupancy hits critical thresholds (e.g., >90%) or when animals have been waiting too long without a match.
+- **🎨 Digital Wellness Dashboard**: A premium, responsive React SPA designed with a calming "digital wellness" aesthetic to reduce cognitive load on stressed shelter workers.
+
+---
+
+## 🛠️ Architecture & Tech Stack
+
+PawsMatch is built using a modern decoupled architecture:
+
+### **Backend Core (Python & FastAPI)**
+- **Framework:** FastAPI for rapid, asynchronous API development.
+- **Agent Orchestration:** [Strands Agents SDK](https://github.com/awslabs/strands) for multi-tool agentic workflows.
+- **Core Reasoning Model:** **Featherless (MiniMax-M2.5)** — chosen specifically for its strong tool-calling reliability.
+- **Translation Model:** **Sarvam AI (sarvam-105b)** — handles localized Indic language translations independently of the core reasoning loop.
+- **Database:** SQLite for lightweight, reliable persistence.
+
+### **Frontend App (React & Vite)**
+- **Framework:** React 18, bundled with Vite for lightning-fast HMR.
+- **Styling:** Vanilla CSS with a highly custom, polished design system (glassmorphism, micro-animations, cinematic hero layouts).
+- **Icons:** Lucide React.
+
+---
+
+## 🚀 Getting Started
+
+Follow these instructions to run the entire stack locally. 
+
+### Prerequisites
+- Python 3.9+
+- Node.js 18+ and npm
+- API Keys for Featherless and Sarvam AI.
+
+### 1. Backend Setup (FastAPI & Agent)
+
+Open a terminal and navigate to the project root:
 
 ```bash
+# 1. Create and activate a virtual environment
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+
+# On Windows:
+.venv\Scripts\activate
+# On Mac/Linux:
+source .venv/bin/activate
+
+# 2. Install Python dependencies
 pip install -e .
-cp .env.example .env              # fill in FEATHERLESS_API_KEY and SARVAM_API_KEY
-python -m app.seed_data           # seeds animals/applicants + shelter config
-python -m app.agent.pawsmatch_agent   # smoke test — do this FIRST
+
+# 3. Configure environment variables
+cp .env.example .env
+# Open .env and fill in your FEATHERLESS_API_KEY and SARVAM_API_KEY
+
+# 4. Seed the database with mock animals, applicants, and shelter config
+python -m app.seed_data
+
+# 5. Start the backend server
+uvicorn app.main:app --reload --port 8000
 ```
+*The backend API is now running at http://localhost:8000*
 
-That last command is deliberate: it's the smallest possible check that
-MiniMax-M2.5 can actually call a tool and return a sane answer, before any
-more code gets built on top of it. If it doesn't behave, swap
-`get_core_model()` in `app/agent/model_config.py` back to a proven provider
-(Anthropic direct) rather than debugging tool-calling and the rest of the
-app at the same time.
+### 2. Frontend Setup (React Dashboard)
 
-## What's scaffolded vs. still to build
+Open a **second** terminal, ensure you are in the project root, and run:
 
-**Done:**
-- Data models (`app/models.py`) — matches the PRD's animal/applicant/match schema
-- SQLite persistence (`app/database.py`)
-- Scoring engine (`app/scoring.py`) — hard vetoes + explainable weighted score
-- Agent + 6 tools (`app/agent/`) — scoring, escalation, kennel status, search, translation
-- Seed data engineered to trigger both escalation rules
+```bash
+# 1. Install Node dependencies
+npm install
 
-**Not yet built (next steps):**
-- `draft_outreach` as a standalone tool — for the scaffold, drafting outreach
-  is just something you can ask the agent directly ("draft outreach for
-  Maple's top match"); formalize into a dedicated tool once the FastAPI
-  layer needs to call it on a schedule
-- FastAPI routes (`app/api/`) exposing all of this over HTTP
-- The web dashboard (full SPA — match board, occupancy gauge, agent chat)
-- `update_match_status` currently returns a stub — wire it to
-  `app/database.py`'s matches table once the dashboard's "confirm placement"
-  button exists, since that's the one action that must always be a human click
+# 2. Start the Vite development server
+npm run dev
+```
+*The frontend is now running at http://localhost:3001 (or the port specified in your console).*
 
-## Before you run this
+---
 
-- **Verify `MiniMax-M2.5`'s exact model ID** on featherless.ai/models — the
-  one in `.env.example` is a best guess at their catalog naming convention,
-  not confirmed against the live catalog.
-- **Check MiniMax-M2.5's size tier** against Featherless's concurrency table
-  — frontier-sized models cap you at 1 concurrent request on the free plan.
-- **A LICENSE file (MIT) is included** — required for the hackathon
-  submission's "About" section.
+## 🧪 Testing the Agent Manually (Smoke Test)
+
+If you want to verify that the Strands agent is properly calling tools without booting the whole UI, you can run the built-in smoke test script from your activated Python environment:
+
+```bash
+python -m app.agent.pawsmatch_agent
+```
+*Note: Frontier-sized models on Featherless may limit you to 1 concurrent request on free plans. Ensure no other agent calls are running when testing.*
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for more information.
+
+---
+*Built with ❤️ for animals everywhere.*
