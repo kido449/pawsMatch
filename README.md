@@ -4,6 +4,8 @@
 
 Built for the **AWS "Agents for Humans" Hackathon** — *Good Neighbor Agents Track*.
 
+**Live Deployment:** [Streamlit Community Cloud URL Placeholder]
+
 ---
 
 ## 📖 The Vision
@@ -22,25 +24,19 @@ It’s not just a dashboard—it’s an active operational partner.
 - **💬 Conversational Operations Agent**: A Strands-powered AI assistant that has access to all shelter data. Ask it *"Who is the best match for Maple?"* or *"Draft an outreach message for Max"* and watch it use its tools to accomplish the task.
 - **🌐 Accessible Multi-Lingual Intake**: Integrates with Sarvam AI to translate applicant communications into localized Indic languages, ensuring accessibility for diverse communities (such as via WhatsApp intake).
 - **🚨 Smart Escalation Monitoring**: Automatically alerts staff when kennel occupancy hits critical thresholds (e.g., >90%) or when animals have been waiting too long without a match.
-- **🎨 Digital Wellness Dashboard**: A premium, responsive React SPA designed with a calming "digital wellness" aesthetic to reduce cognitive load on stressed shelter workers.
+- **🎨 Digital Wellness Dashboard**: A premium, responsive Streamlit application designed with a calming "digital wellness" aesthetic to reduce cognitive load on stressed shelter workers.
 
 ---
 
 ## 🛠️ Architecture & Tech Stack
 
-PawsMatch is built using a modern decoupled architecture:
+PawsMatch is built using a simple, unified Streamlit architecture:
 
-### **Backend Core (Python & FastAPI)**
-- **Framework:** FastAPI for rapid, asynchronous API development.
+- **UI & Framework:** [Streamlit](https://streamlit.io/) for a rapid, reactive Python UI (calls agent/db functions directly in-process).
 - **Agent Orchestration:** [Strands Agents SDK](https://github.com/awslabs/strands) for multi-tool agentic workflows.
 - **Core Reasoning Model:** **Featherless (MiniMax-M2.5)** — chosen specifically for its strong tool-calling reliability.
 - **Translation Model:** **Sarvam AI (sarvam-105b)** — handles localized Indic language translations independently of the core reasoning loop.
 - **Database:** SQLite for lightweight, reliable persistence.
-
-### **Frontend App (React & Vite)**
-- **Framework:** React 18, bundled with Vite for lightning-fast HMR.
-- **Styling:** Vanilla CSS with a highly custom, polished design system (glassmorphism, micro-animations, cinematic hero layouts).
-- **Icons:** Lucide React.
 
 ---
 
@@ -53,7 +49,7 @@ Follow these instructions to run the entire stack locally.
 - Node.js 18+ and npm
 - API Keys for Featherless and Sarvam AI.
 
-### 1. Backend Setup (FastAPI & Agent)
+### Local Setup
 
 Open a terminal and navigate to the project root:
 
@@ -76,20 +72,8 @@ cp .env.example .env
 # 4. Seed the database with mock animals, applicants, and shelter config
 python -m app.seed_data
 
-# 5. Start the backend server
-uvicorn app.main:app --reload --port 8000
-```
-
-### 2. Frontend Setup (React Dashboard)
-
-Open a **second** terminal, ensure you are in the project root, and run:
-
-```bash
-# 1. Install Node dependencies
-npm install
-
-# 2. Start the Vite development server
-npm run dev
+# 5. Start the Streamlit app
+streamlit run streamlit_app.py
 ```
 
 ---
