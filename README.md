@@ -79,7 +79,6 @@ python -m app.seed_data
 # 5. Start the backend server
 uvicorn app.main:app --reload --port 8000
 ```
-*The backend API is now running at http://localhost:8000*
 
 ### 2. Frontend Setup (React Dashboard)
 
@@ -92,7 +91,6 @@ npm install
 # 2. Start the Vite development server
 npm run dev
 ```
-*The frontend is now running at http://localhost:3001 (or the port specified in your console).*
 
 ---
 
