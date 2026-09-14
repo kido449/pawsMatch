@@ -2,7 +2,7 @@
 
 Two models, used for what each is actually good at:
 
-- Featherless (MiniMax-M2.5): the PawsMatch agent's core reasoning loop.
+- Google Gemini: the PawsMatch agent's core reasoning loop.
   Chosen specifically for strong agentic tool-calling — this agent calls
   7 tools (score_matches, draft_outreach, check_escalations, etc.) and
   needs to chain them reliably.
@@ -11,8 +11,8 @@ Two models, used for what each is actually good at:
   Not used for agent reasoning — Sarvam is a specialist tool call, not
   the orchestrator.
 
-Both are OpenAI-compatible endpoints, so both use Strands' OpenAIModel
-provider — only base_url/api_key/model_id differ.
+Both are OpenAI-compatible endpoints (or configured as such), so both use 
+Strands' OpenAIModel provider — only base_url/api_key/model_id differ.
 """
 
 import os

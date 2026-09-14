@@ -33,7 +33,7 @@ PawsMatch is built using a modern decoupled architecture:
 ### **Backend Core (Python & FastAPI)**
 - **Framework:** FastAPI for rapid, asynchronous API development.
 - **Agent Orchestration:** [Strands Agents SDK](https://github.com/awslabs/strands) for multi-tool agentic workflows.
-- **Core Reasoning Model:** **Featherless (MiniMax-M2.5)** — chosen specifically for its strong tool-calling reliability.
+- **Core Reasoning Model:** **Google Gemini** — chosen specifically for its strong reasoning and reliable tool-calling capabilities.
 - **Translation Model:** **Sarvam AI (sarvam-105b)** — handles localized Indic language translations independently of the core reasoning loop.
 - **Database:** SQLite for lightweight, reliable persistence.
 
@@ -51,7 +51,7 @@ Follow these instructions to run the entire stack locally.
 ### Prerequisites
 - Python 3.9+
 - Node.js 18+ and npm
-- API Keys for Featherless and Sarvam AI.
+- API Keys for Google Gemini and Sarvam AI.
 
 ### 1. Backend Setup (FastAPI & Agent)
 
@@ -71,7 +71,7 @@ pip install -e .
 
 # 3. Configure environment variables
 cp .env.example .env
-# Open .env and fill in your FEATHERLESS_API_KEY and SARVAM_API_KEY
+# Open .env and fill in your GEMINI_API_KEY and SARVAM_API_KEY
 
 # 4. Seed the database with mock animals, applicants, and shelter config
 python -m app.seed_data
@@ -101,7 +101,6 @@ If you want to verify that the Strands agent is properly calling tools without b
 ```bash
 python -m app.agent.pawsmatch_agent
 ```
-*Note: Frontier-sized models on Featherless may limit you to 1 concurrent request on free plans. Ensure no other agent calls are running when testing.*
 
 ---
 
