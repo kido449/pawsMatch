@@ -6,11 +6,18 @@ project grows past the demo.
 """
 
 import json
+import os
+import shutil
 from datetime import datetime
 
 import aiosqlite
 
 DB_PATH = "shelterops.db"
+
+if os.environ.get("VERCEL"):
+    DB_PATH = "/tmp/shelterops.db"
+    if not os.path.exists(DB_PATH) and os.path.exists("shelterops.db"):
+        shutil.copy("shelterops.db", DB_PATH)
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS animals (
